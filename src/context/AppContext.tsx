@@ -1,7 +1,6 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Order, NotificationType } from '../types';
-import { mockOrders } from './mockData';
 import { getCookie, setCookie } from '../lib/cookies';
 import { supabase, checkAdminSession } from '../lib/supabase';
 
@@ -50,10 +49,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
         setOrders(JSON.parse(String(savedOrders)));
       } catch (e) {
         console.error('Error parsing orders:', e);
-        setOrders(mockOrders);
       }
     } else {
-      setOrders(mockOrders);
+      setOrders([]);
     }
 
     if (savedNotifications) {

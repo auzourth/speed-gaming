@@ -3,8 +3,47 @@
 import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, CheckCircle, XCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+
+// Notification component
+const Notification = ({
+  message,
+  type,
+  onClose,
+}: {
+  message: string;
+  type: 'success' | 'error';
+  onClose: () => void;
+}) => {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onClose();
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [onClose]);
+
+  return (
+    <div
+      className={`fixed top-4 right-4 flex items-center p-4 rounded-lg shadow-lg transition-all transform duration-500 z-50 ${
+        type === 'success'
+          ? 'bg-green-900/80 border border-green-500'
+          : 'bg-red-900/80 border border-red-500'
+      }`}
+    >
+      {type === 'success' ? (
+        <CheckCircle size={20} className="text-green-400 mr-2" />
+      ) : (
+        <XCircle size={20} className="text-red-400 mr-2" />
+      )}
+      <span className="text-white">{message}</span>
+      <button onClick={onClose} className="ml-4 text-gray-300 hover:text-white">
+        &times;
+      </button>
+    </div>
+  );
+};
 
 export default function Redeem() {
   const params = useParams();
@@ -17,6 +56,20 @@ export default function Redeem() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [codeExists, setCodeExists] = useState(true);
+  const [notification, setNotification] = useState<{
+    message: string;
+    type: 'success' | 'error';
+  } | null>(null);
+
+  // Helper function to show notifications
+  const showNotification = (message: string, type: 'success' | 'error') => {
+    setNotification({ message, type });
+  };
+
+  // Helper function to clear notifications
+  const clearNotification = () => {
+    setNotification(null);
+  };
 
   useLayoutEffect(() => {
     // fetch order from Supabase
@@ -67,7 +120,7 @@ export default function Redeem() {
 
       // If the code has already been redeemed (not pending), show error
       if (data && data.status === 'delivered') {
-        setError('This code has already been redeemed.');
+        setError('This code has already been redeemed. check track order page');
         return;
       }
 
@@ -111,17 +164,19 @@ export default function Redeem() {
       }
 
       if (existingOrder.status === 'delivered') {
-        setError('This code has already been redeemed.');
+        setError('This code has already been redeemed. check track order page');
         setLoading(false);
         return;
       }
 
-      // Update the existing order with user information
+      // Update the existing order with user information and mark as redeemed
       const { error: updateError } = await supabase
         .from('cheap-play-zone')
         .update({
           email,
           updated_at: new Date().toISOString(),
+          isRedeemed: true, // Mark the code as redeemed
+          status: 'pending', // Update status to pending
         })
         .eq('code', code);
 
@@ -129,12 +184,18 @@ export default function Redeem() {
         throw updateError;
       }
 
-      // Redirect to confirmation page
-      router.push('/redeem/confirmation');
+      // Show success notification
+      showNotification('Code successfully redeemed!', 'success');
+
+      // Redirect to confirmation page after a short delay
+      setTimeout(() => {
+        router.push('/redeem/confirmation');
+      }, 2000);
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : 'Please try again.';
       setError('Failed to redeem code: ' + errorMessage);
+      showNotification(`Failed to redeem: ${errorMessage}`, 'error');
       console.error(err);
       setLoading(false);
     }
@@ -142,6 +203,14 @@ export default function Redeem() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={clearNotification}
+        />
+      )}
+
       <Link
         href="/"
         className="flex items-center text-gray-400 hover:text-white mb-8 transition-colors"

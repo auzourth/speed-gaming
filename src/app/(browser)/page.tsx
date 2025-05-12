@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TowerControl as GameController,
   Code,
@@ -8,12 +8,94 @@ import {
   CheckCircle,
   Clock,
   Mail,
+  X,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
-const page: React.FC = () => {
+const RedeemCodeModal = ({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) => {
+  const router = useRouter();
+  const [code, setCode] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!code.trim()) {
+      setError('Please enter a redemption code');
+      return;
+    }
+
+    // Redirect to the redeem page with the code
+    router.push(`/redeem/${code.trim()}`);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
+      <div className="bg-gray-800 rounded-lg shadow-xl w-full max-w-md">
+        <div className="flex justify-between items-center p-6 border-b border-gray-700">
+          <h2 className="text-xl font-bold">Enter Redemption Code</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-400 hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6">
+          {error && (
+            <div className="bg-red-900/50 border border-red-500 text-white p-3 rounded mb-4">
+              {error}
+            </div>
+          )}
+
+          <div className="mb-6">
+            <label className="block text-gray-400 mb-2">REDEMPTION CODE</label>
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => {
+                setCode(e.target.value);
+                setError('');
+              }}
+              placeholder="Enter your redemption code..."
+              className="w-full bg-gray-700 border border-gray-600 rounded p-3 text-white"
+              autoFocus
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-4 rounded transition-colors"
+          >
+            Redeem Now
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const Page = () => {
+  const [isRedeemModalOpen, setIsRedeemModalOpen] = useState(false);
+
   return (
     <div className="bg-black text-white min-h-screen">
+      {/* Redeem Code Modal */}
+      <RedeemCodeModal
+        isOpen={isRedeemModalOpen}
+        onClose={() => setIsRedeemModalOpen(false)}
+      />
+
       {/* Hero Section */}
       <section className="py-16 relative overflow-hidden">
         <div className="container mx-auto px-4 relative z-10">
@@ -23,13 +105,13 @@ const page: React.FC = () => {
             </h1>
 
             <div className="flex justify-center gap-4 mt-8">
-              <Link
-                href="/redeem"
+              <button
+                onClick={() => setIsRedeemModalOpen(true)}
                 className="flex items-center bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg transition-colors text-lg font-medium"
               >
                 <Code className="mr-2" size={20} />
                 Redeem Code
-              </Link>
+              </button>
               <Link
                 href="/track-order"
                 className="flex items-center bg-gray-700 hover:bg-gray-600 px-6 py-3 rounded-lg transition-colors text-lg font-medium"
@@ -264,12 +346,12 @@ const page: React.FC = () => {
           <h2 className="text-3xl font-bold mb-8">READY TO TRY IT YOURSELF?</h2>
 
           <div className="flex justify-center gap-4">
-            <Link
-              href="/redeem"
+            <button
+              onClick={() => setIsRedeemModalOpen(true)}
               className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg transition-colors text-lg font-medium"
             >
               Redeem Code
-            </Link>
+            </button>
           </div>
         </div>
       </section>
@@ -277,4 +359,4 @@ const page: React.FC = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -6,6 +6,7 @@ export interface Order {
   email?: string;
   created: string;
   status: 'pending' | 'delivered';
+  isRedeemed: boolean;
   loginInfo?: string;
   created_at?: string;
   updated_at?: string;

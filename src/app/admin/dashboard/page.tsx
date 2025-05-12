@@ -1,10 +1,20 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { Search, Copy, Plus, Trash } from 'lucide-react';
+import { Search, Copy, Plus, Trash, Bell } from 'lucide-react';
 import { Order } from '../../../types';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import CodeGeneratorModal from '@/components/common/CodeGeneratorModal';
+
+// Extend the Notification interface
+interface RedemptionNotification {
+  id: string;
+  message: string;
+  time: string;
+  read: boolean;
+  orderId?: string;
+  code?: string;
+}
 
 const AdminDashboardPage: React.FC = () => {
   const router = useRouter();
@@ -17,6 +27,9 @@ const AdminDashboardPage: React.FC = () => {
   const [isCodeModalOpen, setIsCodeModalOpen] = useState(false);
   const [orders, setOrders] = useState<Order[]>([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [notifications, setNotifications] = useState<RedemptionNotification[]>(
+    []
+  );
 
   // Load orders from Supabase
   useEffect(() => {
@@ -53,9 +66,31 @@ const AdminDashboardPage: React.FC = () => {
           email: order.email || null,
           name: order.name || null,
           created: order.created_at,
+          isRedeemed: order.isRedeemed || false,
         }));
 
         setOrders(formattedOrders);
+
+        // Extract recently redeemed orders for notifications
+        const redeemedOrders = formattedOrders.filter(
+          (order) =>
+            order.isRedeemed &&
+            new Date(order.created).getTime() >
+              Date.now() - 7 * 24 * 60 * 60 * 1000 // Within last 7 days
+        );
+
+        // Convert redeemed orders to notifications
+        const redemptionNotifications: RedemptionNotification[] =
+          redeemedOrders.map((order) => ({
+            id: order.id,
+            message: `Order ${order.code} has been redeemed`,
+            time: new Date(order.created).toLocaleString(),
+            read: false,
+            orderId: order.id,
+            code: order.code,
+          }));
+
+        setNotifications(redemptionNotifications);
       }
 
       setIsLoading(false);
@@ -63,6 +98,55 @@ const AdminDashboardPage: React.FC = () => {
 
     checkSessionAndLoadData();
   }, [router, refreshTrigger]);
+
+  // Polling for new redemptions every 60 seconds
+  useEffect(() => {
+    const checkForNewRedemptions = async () => {
+      const { data, error } = await supabase
+        .from('cheap-play-zone')
+        .select('*')
+        .eq('isRedeemed', true)
+        .order('updated_at', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error checking for redemptions:', error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        // Get the IDs of current notifications
+        const currentNotificationIds = notifications.map((n) => n.id);
+
+        // Filter for new redemptions not already in notifications
+        const newRedemptions = data.filter(
+          (order) => !currentNotificationIds.includes(order.id)
+        );
+
+        if (newRedemptions.length > 0) {
+          const newNotifications = newRedemptions.map((order) => ({
+            id: order.id,
+            message: `Order ${order.code} has been redeemed`,
+            time: new Date(order.updated_at).toLocaleString(),
+            read: false,
+            orderId: order.id,
+            code: order.code,
+          }));
+
+          setNotifications((prev) => [...newNotifications, ...prev]);
+
+          // Refresh orders list to reflect the latest changes
+          setRefreshTrigger((prev) => prev + 1);
+        }
+      }
+    };
+
+    // Set up polling interval
+    const intervalId = setInterval(checkForNewRedemptions, 60000); // 60 seconds
+
+    // Clean up on unmount
+    return () => clearInterval(intervalId);
+  }, [notifications]);
 
   // Filter orders based on search term
   const filteredOrders = orders.filter((order) => {
@@ -118,6 +202,7 @@ const AdminDashboardPage: React.FC = () => {
           name: generatedCode.name,
           email: generatedCode.email,
           status: 'pending',
+          isRedeemed: false,
         })
         .select();
 
@@ -155,6 +240,14 @@ const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const markAllNotificationsAsRead = () => {
+    setNotifications(notifications.map((n) => ({ ...n, read: true })));
+  };
+
+  const clearAllNotifications = () => {
+    setNotifications([]);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center">
@@ -165,7 +258,89 @@ const AdminDashboardPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
-      <h1 className="text-2xl font-bold mb-6">Admin Panel</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Admin Panel</h1>
+
+        <div className="relative">
+          <button
+            className="p-2 text-gray-300 hover:text-white transition-colors relative"
+            onClick={() => {
+              const notificationsElement = document.getElementById(
+                'notifications-dropdown'
+              );
+              if (notificationsElement) {
+                notificationsElement.classList.toggle('hidden');
+                markAllNotificationsAsRead();
+              }
+            }}
+          >
+            <Bell size={20} />
+            {notifications.filter((n) => !n.read).length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">
+                {notifications.filter((n) => !n.read).length}
+              </span>
+            )}
+          </button>
+
+          <div
+            id="notifications-dropdown"
+            className="hidden absolute right-0 mt-2 w-80 bg-gray-800 rounded-md shadow-lg z-10"
+          >
+            <div className="p-4 border-b border-gray-700">
+              <h3 className="text-white font-medium">Recent Redemptions</h3>
+            </div>
+
+            <div className="max-h-96 overflow-y-auto">
+              {notifications.length === 0 ? (
+                <p className="text-gray-400 p-4 text-center">
+                  No recent redemptions
+                </p>
+              ) : (
+                <ul>
+                  {notifications.map((notification) => (
+                    <li
+                      key={notification.id}
+                      className="border-b border-gray-700 last:border-0"
+                    >
+                      <div className="p-4 hover:bg-gray-700 transition-colors">
+                        <p className="text-white mb-1">
+                          {notification.message}
+                        </p>
+                        <p className="text-gray-400 text-sm">
+                          {notification.time}
+                        </p>
+                        {notification.orderId && (
+                          <button
+                            onClick={() =>
+                              router.push(
+                                `/admin/orders/${notification.orderId}`
+                              )
+                            }
+                            className="text-blue-400 hover:text-blue-300 text-sm mt-2"
+                          >
+                            View Details
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {notifications.length > 0 && (
+              <div className="p-3 border-t border-gray-700">
+                <button
+                  className="text-blue-400 hover:text-blue-300 text-sm w-full text-center"
+                  onClick={clearAllNotifications}
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="mb-6 flex flex-wrap gap-4 items-center">
         <div className="relative flex-grow max-w-md">
@@ -230,6 +405,7 @@ const AdminDashboardPage: React.FC = () => {
               <th className="p-3 text-left">Email</th>
               <th className="p-3 text-left">Code</th>
               <th className="p-3 text-left">Created</th>
+              <th className="p-3 text-left">Status</th>
               <th className="p-3 text-left">Copy</th>
               <th className="p-3 text-left">Add Game Information</th>
             </tr>
@@ -238,7 +414,9 @@ const AdminDashboardPage: React.FC = () => {
             {currentItems.map((order: Order) => (
               <tr
                 key={order.id}
-                className="border-t border-gray-700 hover:bg-gray-750"
+                className={`border-t border-gray-700 hover:bg-gray-750 ${
+                  order.isRedeemed ? 'bg-green-900/20' : ''
+                }`}
               >
                 <td className="p-3">
                   <input
@@ -254,6 +432,19 @@ const AdminDashboardPage: React.FC = () => {
                 <td className="p-3">{order.code}</td>
                 <td className="p-3">
                   {new Date(order.created).toLocaleString()}
+                </td>
+                <td className="p-3">
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs ${
+                      order.isRedeemed
+                        ? 'bg-green-500/20 text-green-400'
+                        : order.status === 'delivered'
+                        ? 'bg-blue-500/20 text-blue-400'
+                        : 'bg-yellow-500/20 text-yellow-400'
+                    }`}
+                  >
+                    {order.isRedeemed ? 'Redeemed' : order.status}
+                  </span>
                 </td>
                 <td className="p-3">
                   <button
@@ -275,7 +466,7 @@ const AdminDashboardPage: React.FC = () => {
             ))}
             {currentItems.length === 0 && (
               <tr>
-                <td colSpan={8} className="p-4 text-center text-gray-500">
+                <td colSpan={9} className="p-4 text-center text-gray-500">
                   No orders found
                 </td>
               </tr>

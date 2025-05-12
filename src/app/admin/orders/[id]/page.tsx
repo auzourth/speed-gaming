@@ -83,8 +83,9 @@ export default function EditOrder() {
       const { error: updateError } = await supabase
         .from('cheap-play-zone')
         .update({
-          // loginInfo: loginInfo,
+          loginInfo: loginInfo, // Enable loginInfo update
           status: 'delivered',
+          isRedeemed: false, // Set isRedeemed to false
           updated_at: new Date().toISOString(),
         })
         .eq('id', order.id);
@@ -99,7 +100,7 @@ export default function EditOrder() {
       }
 
       // Return to dashboard
-      router.push('/admin/dashboard');
+      router.back();
     } catch (err: unknown) {
       const errorMessage =
         err instanceof Error ? err.message : 'Please try again.';
