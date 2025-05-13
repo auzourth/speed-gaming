@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { Code, History, Bell } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
-import NotificationDropdown from './NotificationDropdown';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -44,7 +43,6 @@ const Header: React.FC = () => {
                     </span>
                   )}
                 </button>
-                {showNotifications && <NotificationDropdown />}
               </div>
               <button
                 onClick={logout}

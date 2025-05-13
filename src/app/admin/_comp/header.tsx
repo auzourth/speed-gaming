@@ -24,9 +24,6 @@ export default function AdminHeader() {
   const [notifications, setNotifications] = useState<RedemptionNotification[]>(
     []
   );
-  const [refreshInterval, setRefreshInterval] = useState<NodeJS.Timeout | null>(
-    null
-  );
 
   useEffect(() => {
     // Redirect if not admin
@@ -74,18 +71,7 @@ export default function AdminHeader() {
 
     // Initial fetch
     fetchRedemptionNotifications();
-
-    // Set up polling interval (every 60 seconds)
-    const intervalId = setInterval(fetchRedemptionNotifications, 60000);
-    setRefreshInterval(intervalId);
-
-    // Clean up on unmount
-    return () => {
-      if (refreshInterval) {
-        clearInterval(refreshInterval);
-      }
-    };
-  }, [refreshInterval]); // Add refreshInterval to the dependency array
+  }, [router]);
 
   const handleLogout = async () => {
     try {
