@@ -189,7 +189,7 @@ const Page: React.FC = () => {
               imgae: image7,
               description: (
                 <p>
-                  However, if you've already upgraded it,{' '}
+                  However, if you&apos;ve already upgraded it,{' '}
                   <Link
                     href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
                     className="text-blue-500"
@@ -249,8 +249,8 @@ const Page: React.FC = () => {
             {
               title: (
                 <p>
-                  If the game doesn't work on your personal account, please try
-                  login again with the received account,
+                  If the game doesn&apos;t work on your personal account, please
+                  try login again with the received account,
                   <Link
                     href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
                     className="text-blue-500"
