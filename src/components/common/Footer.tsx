@@ -30,14 +30,7 @@ const Footer: React.FC = () => {
                   About
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/how-it-works"
-                  className="text-gray-400 hover:text-white"
-                >
-                  How it Works
-                </Link>
-              </li>
+
               <li>
                 <Link href="/faq" className="text-gray-400 hover:text-white">
                   FAQ
@@ -62,7 +55,7 @@ const Footer: React.FC = () => {
           <div>
             <h3 className="text-xl font-bold mb-4">Support</h3>
             <a
-              href="https://www.g2a.com/contact-us"
+              href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded inline-block transition-colors"

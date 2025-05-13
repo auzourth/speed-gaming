@@ -60,8 +60,14 @@ const Page: React.FC = () => {
               Changing the PS5, formatting the PS5 or changing the HDD of the
               PS5 will lead to an unplayable game, sometimes this can be fixed,
               so you can download the game again, but you are doing this at your
-              own risk. If this happens please come on Live Chat, and we will
-              check the account.
+              own risk. If this happens please come on{' '}
+              <Link
+                href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                className="text-blue-500"
+              >
+                Contact us on G2A
+              </Link>
+              , and we will check the account.
             </li>
             <li>
               The account can be activated ONLY ON ONE PS5. We are not
@@ -164,15 +170,35 @@ const Page: React.FC = () => {
               title:
                 'Type in the Verification code received in the email with the credentials.',
               imgae: image6,
-              description:
-                'If the verification code doesn&apos;t work, use this form to get a new code, or ask on the chatbox on the bottom right of the page.',
+              description: (
+                <p>
+                  If the verification code doesn&apos;t work,{' '}
+                  <Link
+                    href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                    className="text-blue-500"
+                  >
+                    Contact us on G2A
+                  </Link>
+                  .
+                </p>
+              ),
             },
             {
               title:
                 'If you are asked to upgrade the account, please SKIP this phase.',
               imgae: image7,
-              description:
-                'However, if you&apos;ve already upgraded it, use this form or talk to us on live chat to receive a new verification code. Press OK and you will be logged in.',
+              description: (
+                <p>
+                  However, if you've already upgraded it,{' '}
+                  <Link
+                    href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                    className="text-blue-500"
+                  >
+                    Contact us on G2A
+                  </Link>
+                  .
+                </p>
+              ),
             },
             {
               title:
@@ -221,8 +247,19 @@ const Page: React.FC = () => {
               imgae: image11,
             },
             {
-              title:
-                'If the game doesn&apos;t work on your personal account, please try login again with the received account, use the form to get a new code.',
+              title: (
+                <p>
+                  If the game doesn't work on your personal account, please try
+                  login again with the received account,
+                  <Link
+                    href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                    className="text-blue-500"
+                  >
+                    Contact us on G2A
+                  </Link>
+                  .
+                </p>
+              ),
               imgae: image12,
             },
             {
@@ -239,8 +276,22 @@ const Page: React.FC = () => {
               imgae: image15,
             },
             {
-              title:
-                'If the verification code is not working after a few attempts, just repeat the login process. The login will time out after a period of time, and this will make it work again. If you still encounter problems, please use the live chat service and the agents will help you solve the issue in no time.',
+              title: (
+                <p>
+                  If the verification code is not working after a few attempts,
+                  just repeat the login process. The login will time out after a
+                  period of time, and this will make it work again. If you still
+                  encounter problems, please use the{' '}
+                  <Link
+                    href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                    className="text-blue-500"
+                  >
+                    Contact us on G2A
+                  </Link>{' '}
+                  service and the agents will help you solve the issue in no
+                  time.
+                </p>
+              ),
               imgae: image16,
             },
           ].map((step, index) => (
@@ -254,7 +305,7 @@ const Page: React.FC = () => {
               {step.imgae && (
                 <img
                   src={step.imgae.src}
-                  alt={step.title}
+                  alt={'Step ' + (index + 1)}
                   className="w-full h-auto mb-2"
                 />
               )}
@@ -286,8 +337,14 @@ const Page: React.FC = () => {
               Changing the PS5, formatting the PS5 or changing the HDD of the
               PS5 will lead to an unplayable game, sometimes this can be fixed,
               so you can download the game again, but you are doing this at your
-              own risk. If this happens please come on Live Chat, and we will
-              check the account.
+              own risk. If this happens please come on{' '}
+              <Link
+                href="https://supporthub.g2a.com/marketplace/en/Problem-Solving/how-can-i-contact-the-seller-if-i-have-a-question-or-problem-with-my-item"
+                className="text-blue-500"
+              >
+                Contact us on G2A
+              </Link>
+              , and we will check the account.
             </li>
             <li>
               The account can be activated ONLY ON ONE PS5. We are not
