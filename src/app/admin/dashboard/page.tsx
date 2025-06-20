@@ -443,7 +443,7 @@ const AdminDashboardPage: React.FC = () => {
                         : 'bg-yellow-500/20 text-yellow-400'
                     }`}
                   >
-                    {order.isRedeemed ? 'Redeemed' : order.status}
+                    {order.status}
                   </span>
                 </td>
                 <td className="p-3">

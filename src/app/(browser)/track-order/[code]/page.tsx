@@ -112,7 +112,7 @@ export default function OrderDetails() {
               ) : (
                 <>
                   <Clock size={16} className="mr-1" />
-                  Pending
+                  {order.status}
                 </>
               )}
             </span>
