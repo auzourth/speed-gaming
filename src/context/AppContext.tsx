@@ -10,7 +10,7 @@ interface AppContextType {
   addOrder: (order: Omit<Order, 'id' | 'created' | 'status'>) => void;
   updateOrderStatus: (
     id: string,
-    status: 'pending' | 'delivered',
+    status: 'pending' | 'completed',
     loginInfo?: string
   ) => void;
   findOrderByCode: (code: string) => Order | undefined;
@@ -120,7 +120,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const updateOrderStatus = (
     id: string,
-    status: 'pending' | 'delivered',
+    status: 'pending' | 'completed',
     loginInfo?: string
   ) => {
     setOrders((prev) =>

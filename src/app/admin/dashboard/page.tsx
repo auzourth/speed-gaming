@@ -438,7 +438,7 @@ const AdminDashboardPage: React.FC = () => {
                     className={`px-2 py-1 rounded-full text-xs ${
                       order.isRedeemed
                         ? 'bg-green-500/20 text-green-400'
-                        : order.status === 'delivered'
+                        : order.status === 'completed'
                         ? 'bg-blue-500/20 text-blue-400'
                         : 'bg-yellow-500/20 text-yellow-400'
                     }`}

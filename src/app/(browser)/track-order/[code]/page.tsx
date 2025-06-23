@@ -99,15 +99,15 @@ export default function OrderDetails() {
             <span className="text-gray-400">Status:</span>
             <span
               className={`font-medium flex items-center ${
-                order.status === 'delivered'
+                order.status === 'completed'
                   ? 'text-green-500'
                   : 'text-yellow-500'
               }`}
             >
-              {order.status === 'delivered' ? (
+              {order.status === 'completed' ? (
                 <>
                   <CheckCircle size={16} className="mr-1" />
-                  Delivered
+                  Completed
                 </>
               ) : (
                 <>
@@ -120,7 +120,7 @@ export default function OrderDetails() {
         </div>
 
         <div className="border-t border-gray-800 pt-6 mb-6">
-          {order.status === 'delivered' && order.loginInfo ? (
+          {order.status === 'completed' && order.loginInfo ? (
             <>
               <h2 className="text-xl font-bold mb-3">Login Information</h2>
               <div className="bg-gray-800 p-4 rounded-lg mb-4">

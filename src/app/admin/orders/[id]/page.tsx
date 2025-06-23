@@ -84,7 +84,7 @@ export default function EditOrder() {
         .from('cheap-play-zone')
         .update({
           loginInfo: loginInfo, // Enable loginInfo update
-          status: 'delivered',
+          status: 'completed',
           isRedeemed: false, // Set isRedeemed to false
           updated_at: new Date().toISOString(),
         })
@@ -96,7 +96,7 @@ export default function EditOrder() {
 
       // Also update in local state for backwards compatibility
       if (updateOrderStatus) {
-        updateOrderStatus(order.code, 'delivered', loginInfo);
+        updateOrderStatus(order.code, 'completed', loginInfo);
       }
 
       // Return to dashboard
@@ -205,7 +205,7 @@ export default function EditOrder() {
               }`}
             >
               <Save size={18} />
-              {loading ? 'Saving...' : 'Save and Mark as Delivered'}
+              {loading ? 'Saving...' : 'Save and Mark as Completed'}
             </button>
           </div>
         </form>
