@@ -22,13 +22,13 @@ const Header: React.FC = () => {
   }
 
   return (
-    <header className="bg-black text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold">
-          CheapPlayZone
+    <header className="bg-gray-800 px-6 py-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <Link href="/">
+          <h1 className="text-xl font-bold">CheapPlayZone</h1>
         </Link>
 
-        <nav className="flex items-center space-x-4">
+        <nav className="flex items-center space-x-6">
           {isAdmin ? (
             <>
               <div className="relative">
@@ -53,22 +53,25 @@ const Header: React.FC = () => {
             </>
           ) : (
             <>
-              <Link href="/about" className="hover:text-blue-400">
+              <Link
+                href="/about"
+                className="text-gray-300 hover:text-orange-400"
+              >
                 About
               </Link>
-              <Link href="/faq" className="hover:text-blue-400">
+              <Link href="/faq" className="text-gray-300 hover:text-orange-400">
                 FAQ
               </Link>
               <Link
                 href="/redeem"
-                className="flex items-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded transition-colors"
+                className="flex items-center text-gray-300 hover:text-orange-400"
               >
                 <Code size={16} className="mr-2" />
                 Redeem Code
               </Link>
               <Link
                 href="/track-order"
-                className="flex items-center hover:text-blue-400"
+                className="flex items-center text-gray-300 hover:text-orange-400"
               >
                 <History size={16} className="mr-1" />
                 Track Order
