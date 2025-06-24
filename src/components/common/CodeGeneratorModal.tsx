@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 import { v4 as uuidv4 } from 'uuid';
 import { Copy } from 'lucide-react';
+import InputField from '@/components/ui/InputField';
 
 interface GeneratedCode {
   name: string;
@@ -64,27 +65,21 @@ const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Generate Redemption Code">
       <div className="space-y-4">
-        <div>
-          <label className="block text-gray-400 mb-2">Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter recipient name"
-            className="w-full bg-gray-700 border border-gray-600 rounded p-3 text-white"
-          />
-        </div>
+        <InputField
+          label="Name"
+          value={name}
+          onChange={setName}
+          placeholder="Enter recipient name"
+          required
+        />
 
-        <div>
-          <label className="block text-gray-400 mb-2">Email (Optional)</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter recipient email"
-            className="w-full bg-gray-700 border border-gray-600 rounded p-3 text-white"
-          />
-        </div>
+        <InputField
+          label="Email (Optional)"
+          value={email}
+          onChange={setEmail}
+          placeholder="Enter recipient email"
+          type="email"
+        />
 
         <button
           onClick={generateCode}

@@ -103,7 +103,7 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
             <div className="flex-1 flex gap-2">
               {step.timestamp && (
                 <div className="text-gray-400 text-sm mb-1">
-                  {step.timestamp}
+                  {new Date(step.timestamp).toLocaleString()}
                 </div>
               )}
               <div

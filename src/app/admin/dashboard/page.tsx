@@ -203,6 +203,21 @@ const AdminDashboardPage: React.FC = () => {
           email: generatedCode.email,
           status: 'pending',
           isRedeemed: false,
+          pending: JSON.stringify({
+            label: 'pending',
+            status: 'processing',
+            timestamp: Date.now(),
+          }),
+          processing: JSON.stringify({
+            label: 'processing',
+            status: 'null',
+            timestamp: Date.now(),
+          }),
+          completed: JSON.stringify({
+            label: 'completed',
+            status: 'null',
+            timestamp: Date.now(),
+          }),
         })
         .select();
 
