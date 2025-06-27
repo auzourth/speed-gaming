@@ -1,15 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import {
-  TowerControl as GameController,
-  Code,
-  History,
-  CheckCircle,
-  Clock,
-  Mail,
-  X,
-} from 'lucide-react';
+import { Code, History, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import InputField from '@/components/ui/InputField';

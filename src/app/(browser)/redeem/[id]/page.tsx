@@ -52,14 +52,21 @@ export default function Redeem() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [order, setOrder] = useState<any>(null);
+  const [order, setOrder] = useState<{
+    id: string;
+    code: string;
+    email?: string;
+    status: string;
+    isRedeemed: boolean;
+    processing: string;
+    completed: string;
+  }>();
   const [orderId, setOrderId] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [codeExists, setCodeExists] = useState(true);
-  const [acceptTerms, setAcceptTerms] = useState(false);
   const [notification, setNotification] = useState<{
     message: string;
     type: 'success' | 'error';
@@ -188,12 +195,12 @@ export default function Redeem() {
           isRedeemed: true, // Mark the code as redeemed
           status: 'processing', // Update status to pending
           processing: JSON.stringify({
-            ...parseStepData(order.processing || '{}'),
+            ...parseStepData(order?.processing || '{}'),
             status: 'completed',
             timestamp: new Date().toISOString(),
           }),
           completed: JSON.stringify({
-            ...parseStepData(order.completed || '{}'),
+            ...parseStepData(order?.completed || '{}'),
             status: 'processing',
           }),
         })

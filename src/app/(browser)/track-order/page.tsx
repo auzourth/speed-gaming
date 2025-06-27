@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import InputField from '@/components/ui/InputField';
@@ -12,8 +12,18 @@ export default function TrackOrder() {
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [order, setOrder] = useState<any>(null);
-  const [showFAQ, setShowFAQ] = useState(false);
+  const [order, setOrder] = useState<{
+    id: string;
+    code: string;
+    email?: string;
+    status: string;
+    isRedeemed: boolean;
+    pending?: string;
+    processing?: string;
+    completed?: string;
+    updated_at?: string;
+    loginInfo?: string;
+  }>();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,9 +64,9 @@ export default function TrackOrder() {
     if (!order) return [];
 
     return [
-      parseStepData(order.pending),
-      parseStepData(order.processing),
-      parseStepData(order.completed),
+      parseStepData(order.pending!),
+      parseStepData(order.processing!),
+      parseStepData(order.completed!),
     ];
   };
 

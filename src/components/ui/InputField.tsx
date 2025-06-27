@@ -15,7 +15,6 @@ const InputField: React.FC<InputFieldProps> = ({
   label,
   value,
   onChange,
-  placeholder,
   type = 'text',
   className = '',
   required = false,

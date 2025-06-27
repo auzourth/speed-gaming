@@ -19,6 +19,7 @@ import image13 from '@/assetes/image13.png';
 import image14 from '@/assetes/image14.png';
 import image15 from '@/assetes/image15.png';
 import image16 from '@/assetes/image16.png';
+import Image from 'next/image';
 
 const Page: React.FC = () => {
   return (
@@ -228,10 +229,12 @@ const Page: React.FC = () => {
                 <p className="text-gray-400">{step.description}</p>
               )}
               {step.imgae && (
-                <img
+                <Image
                   src={step.imgae.src}
                   alt={step.title}
                   className="w-full h-auto mb-2"
+                  width={800}
+                  height={450}
                 />
               )}
             </div>
@@ -303,9 +306,11 @@ const Page: React.FC = () => {
                 {step.title}
               </h3>
               {step.imgae && (
-                <img
+                <Image
                   src={step.imgae.src}
                   alt={'Step ' + (index + 1)}
+                  width={800}
+                  height={450}
                   className="w-full h-auto mb-2"
                 />
               )}
