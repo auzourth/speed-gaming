@@ -5,6 +5,7 @@ import { Order } from '../../../types';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import CodeGeneratorModal from '@/components/common/CodeGeneratorModal';
+import Modal from '@/components/common/Modal';
 
 // Extend the Notification interface
 interface RedemptionNotification {
@@ -30,6 +31,10 @@ const AdminDashboardPage: React.FC = () => {
   const [notifications, setNotifications] = useState<RedemptionNotification[]>(
     []
   );
+
+  // Delete confirmation modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   // Load orders from Supabase
   useEffect(() => {
@@ -189,6 +194,49 @@ const AdminDashboardPage: React.FC = () => {
     router.push(`/admin/orders/${id}`);
   };
 
+  // Open delete confirmation modal
+  const handleDeleteOrder = (orderCode: string) => {
+    setOrderToDelete(orderCode);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Confirm and execute delete
+  const confirmDeleteOrder = async () => {
+    if (!orderToDelete) return;
+
+    console.log('Cancelling order with code:', orderToDelete);
+    try {
+      const { error } = await supabase
+        .from('cheap-play-zone')
+        .update({
+          status: 'cancelled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('code', orderToDelete);
+
+      if (error) {
+        alert(`Error cancelling order: ${error.message}`);
+        return;
+      }
+
+      // Refresh data after cancellation
+      setRefreshTrigger((prev) => prev + 1);
+
+      // Close modal and reset state
+      setIsDeleteModalOpen(false);
+      setOrderToDelete(null);
+    } catch (err) {
+      console.error('Exception when cancelling order:', err);
+      alert('An error occurred while cancelling the order');
+    }
+  };
+
+  // Cancel delete
+  const cancelDeleteOrder = () => {
+    setIsDeleteModalOpen(false);
+    setOrderToDelete(null);
+  };
+
   const handleSaveGeneratedCode = async (generatedCode: {
     name: string;
     email: string;
@@ -205,17 +253,12 @@ const AdminDashboardPage: React.FC = () => {
           isRedeemed: false,
           pending: JSON.stringify({
             label: 'pending',
-            status: 'processing',
+            status: 'completed',
             timestamp: Date.now(),
           }),
           processing: JSON.stringify({
             label: 'processing',
-            status: 'null',
-            timestamp: Date.now(),
-          }),
-          completed: JSON.stringify({
-            label: 'completed',
-            status: 'null',
+            status: 'processing',
             timestamp: Date.now(),
           }),
         })
@@ -271,8 +314,57 @@ const AdminDashboardPage: React.FC = () => {
     );
   }
 
+  const orderToDeleteData = orders.find(
+    (order) => order.code === orderToDelete
+  );
+
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={cancelDeleteOrder}
+        title="Confirm Cancel Order"
+      >
+        <div className="space-y-4">
+          <p className="text-gray-300">
+            Are you sure you want to cancel this order?
+          </p>
+
+          {orderToDeleteData && (
+            <div className="bg-gray-700 p-3 rounded">
+              <p className="text-sm">
+                <span className="font-medium">Code:</span>{' '}
+                {orderToDeleteData.code}
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Email:</span>{' '}
+                {orderToDeleteData.email || 'N/A'}
+              </p>
+              <p className="text-sm">
+                <span className="font-medium">Current Status:</span>{' '}
+                {orderToDeleteData.status}
+              </p>
+            </div>
+          )}
+
+          <div className="flex gap-3 justify-center items-end">
+            <button
+              onClick={cancelDeleteOrder}
+              className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={confirmDeleteOrder}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded transition-colors"
+            >
+              Cancel Order
+            </button>
+          </div>
+        </div>
+      </Modal>
+
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Admin Panel</h1>
 
@@ -451,7 +543,9 @@ const AdminDashboardPage: React.FC = () => {
                 <td className="p-3">
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
-                      order.isRedeemed
+                      order.status === 'cancelled'
+                        ? 'bg-red-500/20 text-red-400'
+                        : order.isRedeemed
                         ? 'bg-green-500/20 text-green-400'
                         : order.status === 'completed'
                         ? 'bg-blue-500/20 text-blue-400'
@@ -469,12 +563,19 @@ const AdminDashboardPage: React.FC = () => {
                     <Copy size={16} />
                   </button>
                 </td>
-                <td className="p-3">
+                <td className="flex gap-4 p-3">
                   <button
                     onClick={() => handleAddLoginInfo(order.id)}
                     className="bg-green-500 hover:bg-green-600 text-white p-2 rounded transition-colors"
                   >
                     <Plus size={16} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteOrder(order.code)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-2 rounded transition-colors"
+                    disabled={order.status === 'cancelled'}
+                  >
+                    Cancel
                   </button>
                 </td>
               </tr>

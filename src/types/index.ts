@@ -5,7 +5,7 @@ export interface Order {
   orderId?: string;
   email?: string;
   created: string;
-  status: 'pending' | 'completed';
+  status: 'pending' | 'completed' | 'cancelled';
   isRedeemed: boolean;
   loginInfo?: string;
   created_at?: string;

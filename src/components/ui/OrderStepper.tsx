@@ -9,13 +9,18 @@ interface Step {
 
 interface OrderStepperProps {
   steps: Step[];
+  status: string;
   className?: string;
+  statusTimestamp?: string;
 }
 
 const OrderStepper: React.FC<OrderStepperProps> = ({
   steps,
+  status,
+  statusTimestamp,
   className = '',
 }) => {
+  console.log('status', status);
   // Static step labels
   const stepLabels = ['pending', 'processing', 'Completed'];
   const stepDescriptions = [
@@ -24,7 +29,20 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
     'The order completed.',
   ];
 
-  console.log('steps:', steps);
+  // Format timestamp with timezone
+  const formatTimestamp = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      timeZoneName: 'short',
+      hour12: true,
+    });
+  };
 
   return (
     <div className={`w-full ${className}`}>
@@ -62,7 +80,7 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
                   step.status === 'completed'
                     ? 'bg-green-500'
                     : step.status === 'processing'
-                    ? 'bg-yellow-500'
+                    ? 'bg-amber-500'
                     : 'bg-gray-600'
                 }`}
               >
@@ -103,13 +121,17 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
             <div className="flex-1 flex gap-2">
               {step.timestamp && (
                 <div className="text-gray-400 text-sm mb-1">
-                  {new Date(step.timestamp).toLocaleString()}
+                  {step.status === 'completed'
+                    ? formatTimestamp(step.timestamp)
+                    : formatTimestamp('00000000000000')}
                 </div>
               )}
               <div
                 className={`text-sm ${
-                  step.status === 'completed' || step.status === 'processing'
-                    ? 'text-white font-medium'
+                  step.status === 'completed'
+                    ? 'text-green-500 font-semibold'
+                    : step.status === 'processing'
+                    ? 'text-amber-500 font-medium'
                     : 'text-gray-400'
                 }`}
               >
@@ -118,6 +140,12 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
             </div>
           </div>
         ))}
+
+        {status === 'cancelled' && (
+          <div className=" bg-red-500 text-white px-3 py-1 rounded-full">
+            {formatTimestamp(statusTimestamp!)} Order Cancelled
+          </div>
+        )}
       </div>
     </div>
   );

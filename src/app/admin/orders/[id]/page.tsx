@@ -85,8 +85,12 @@ export default function EditOrder() {
         .update({
           loginInfo: loginInfo, // Enable loginInfo update
           status: 'completed',
-          isRedeemed: false, // Set isRedeemed to false
           updated_at: new Date().toISOString(),
+          completed: JSON.stringify({
+            label: 'completed',
+            status: 'completed',
+            timestamp: new Date().toISOString(),
+          }),
         })
         .eq('id', order.id);
 

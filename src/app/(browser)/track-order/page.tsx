@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import InputField from '@/components/ui/InputField';
 import OrderStepper from '@/components/ui/OrderStepper';
+import { parseStepData } from '../../../lib/helper';
 
 export default function TrackOrder() {
   const [code, setCode] = useState('');
@@ -47,16 +49,6 @@ export default function TrackOrder() {
     }
   };
 
-  // Parse the JSON data safely
-  const parseStepData = (jsonString: string) => {
-    try {
-      return JSON.parse(jsonString);
-    } catch (error) {
-      console.error('Error parsing JSON:', error);
-      return { status: 'null', timestamp: Date.now() }; // Default step if parsing fails
-    }
-  };
-
   // Create steps array for OrderStepper
   const getStepsData = () => {
     if (!order) return [];
@@ -71,11 +63,19 @@ export default function TrackOrder() {
   return (
     <div className="min-h-screen text-white">
       {/* Main Content */}
-      <main className="bg-gray-800 max-w-4xl mx-auto px-6 py-12 my-12">
-        <h2 className="text-3xl font-bold mb-8">Check Your Order Status</h2>
+      <main className="bg-gray-800 max-w-4xl mx-auto px-4 py-6 mt-16">
+        <Link
+          href="/"
+          className="flex items-center text-gray-400 hover:text-white mb-8 transition-colors"
+        >
+          <ChevronLeft size={20} />
+          <span>Back</span>
+        </Link>
+
+        <h2 className="text-xl font-bold mb-4">Check Your Order Status</h2>
 
         {/* Search Form */}
-        <form onSubmit={handleSubmit} className="flex items-end gap-4 mb-8">
+        <form onSubmit={handleSubmit} className="flex items-center gap-3 mb-6">
           <InputField
             label="Enter Redemption Code"
             value={code}
@@ -85,7 +85,7 @@ export default function TrackOrder() {
           <button
             type="submit"
             disabled={loading}
-            className={`bg-[#f2951d] hover:bg-orange-400 text-white font-medium px-8 py-3 rounded-md transition-colors ${
+            className={`bg-[#f2951d] hover:bg-orange-400 text-white text-sm font-medium px-6 py-3 rounded-md transition-colors ${
               loading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
@@ -95,58 +95,62 @@ export default function TrackOrder() {
 
         {/* Error Message */}
         {error && (
-          <div className="bg-red-900/50 border border-red-500 text-white p-4 rounded-md mb-8">
+          <div className="bg-red-900/50 border border-red-500 text-white text-sm p-3 rounded-md mb-6">
             {error}
           </div>
         )}
 
         {/* Order Information */}
-        {order && (
-          <div className="bg-gray-800 rounded-lg p-6 mb-8">
-            <h3 className="text-xl font-semibold mb-6">Order Information</h3>
+        {order && !error && (
+          <div className="bg-gray-800 rounded-lg p-4 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Order Information</h3>
 
-            <div className="grid grid-cols-1 gap-4 mb-8">
+            <div className="grid grid-cols-1 gap-3 mb-6">
               <div>
-                <span className="text-gray-400">Game Email: </span>
-                <span className="text-white">{order?.email}</span>
+                <span className="text-gray-400 text-sm">Game Email: </span>
+                <span className="text-white text-sm">{order?.email}</span>
               </div>
               <div>
-                <span className="text-gray-400">Game Password: </span>
-                <span className="text-white">{order.code}</span>
+                <span className="text-gray-400 text-sm">Game Password: </span>
+                <span className="text-white text-sm">{order.code}</span>
               </div>
               <div>
-                <span className="text-gray-400">Guide: </span>
-                <span className="text-white">{order.loginInfo}</span>
+                <span className="text-gray-400 text-sm">Guide: </span>
+                <span className="text-white text-sm">{order.loginInfo}</span>
               </div>
             </div>
 
             {/* Order Stepper */}
-            <OrderStepper steps={getStepsData()} />
+            <OrderStepper
+              steps={getStepsData()}
+              status={order.status}
+              statusTimestamp={order.updated_at}
+            />
           </div>
         )}
 
         {/* FAQ Section */}
-        <div className="bg-gray-800 rounded-lg p-6">
+        {/* <div className="bg-gray-800 rounded-lg p-4">
           <button
             onClick={() => setShowFAQ(!showFAQ)}
             className="flex items-center justify-between w-full text-left"
           >
-            <h3 className="text-lg font-medium">
+            <h3 className="text-base font-medium">
               How To open a case in kinguin?
             </h3>
             <ChevronDown
-              className={`w-5 h-5 transition-transform ${
+              className={`w-4 h-4 transition-transform ${
                 showFAQ ? 'rotate-180' : ''
               }`}
             />
           </button>
 
           {showFAQ && (
-            <div className="mt-4 pt-4 border-t border-gray-700">
-              <p className="text-gray-300">
+            <div className="mt-3 pt-3 border-t border-gray-700">
+              <p className="text-gray-300 text-sm">
                 To open a case in Kinguin, please follow these steps:
               </p>
-              <ol className="list-decimal list-inside mt-2 space-y-1 text-gray-300">
+              <ol className="list-decimal list-inside mt-2 space-y-1 text-gray-300 text-sm">
                 <li>Log into your Kinguin account</li>
                 <li>Navigate to your order history</li>
                 <li>Find the relevant order and click "Report Problem"</li>
@@ -156,7 +160,7 @@ export default function TrackOrder() {
               </ol>
             </div>
           )}
-        </div>
+        </div> */}
       </main>
     </div>
   );
