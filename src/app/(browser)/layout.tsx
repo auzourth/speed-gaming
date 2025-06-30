@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'CheapPlayZone',
+  title: 'Speed Gaming',
   description: 'Your trusted source for game keys and digital products',
 };
 
