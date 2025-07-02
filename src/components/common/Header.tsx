@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Code, History, Bell } from 'lucide-react';
+import { History, Bell } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -54,21 +54,21 @@ const Header: React.FC = () => {
           ) : (
             <>
               <Link
-                href="/about"
+                href="/how-it-works"
                 className="text-gray-300 hover:text-orange-400"
               >
-                About
+                How It Works
               </Link>
               <Link href="/faq" className="text-gray-300 hover:text-orange-400">
                 FAQ
               </Link>
-              <Link
+              {/* <Link
                 href="/redeem"
                 className="flex items-center text-gray-300 hover:text-orange-400"
               >
                 <Code size={16} className="mr-2" />
                 Redeem Code
-              </Link>
+              </Link> */}
               <Link
                 href="/track-order"
                 className="flex items-center text-gray-300 hover:text-orange-400"

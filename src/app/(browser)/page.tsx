@@ -114,7 +114,7 @@ const Page = () => {
             </div>
             <div className="mt-12">
               <Link
-                href="mailto:boufitassdoha01@gmail.com"
+                href="mailto:ali.transporter@gmail.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-lg transition-colors"
