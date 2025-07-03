@@ -1,9 +1,7 @@
 'use client';
 
 import { ChevronDown } from 'lucide-react';
-import Image from 'next/image';
 import React from 'react';
-import openCase from '@/assetes/open-case.jpeg';
 
 function Page() {
   const [showFAQ2, setShowFAQ2] = React.useState(false);
