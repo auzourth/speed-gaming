@@ -57,7 +57,7 @@ const Header: React.FC = () => {
                 href="/how-it-works"
                 className="text-gray-300 hover:text-orange-400"
               >
-                How It Works
+                How To Open a Case
               </Link>
               <Link href="/faq" className="text-gray-300 hover:text-orange-400">
                 FAQ
