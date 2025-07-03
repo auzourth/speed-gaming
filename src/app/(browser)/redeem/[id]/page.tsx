@@ -61,7 +61,6 @@ export default function Redeem() {
     processing: string;
     completed: string;
   }>();
-  const [orderId, setOrderId] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -92,7 +91,6 @@ export default function Redeem() {
         .single();
       if (ordersData) {
         setOrder(ordersData);
-        setOrderId(ordersData.id);
         setEmail(ordersData.email || '');
       }
     };
@@ -146,8 +144,8 @@ export default function Redeem() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!orderId || !email || !code) {
-      setError('All fields are required');
+    if (!code) {
+      setError('Redeem code is required');
       return;
     }
 
@@ -291,22 +289,12 @@ export default function Redeem() {
 
         <form onSubmit={handleSubmit}>
           <InputField
-            label="YOUR ORDER ID"
-            value={orderId || ''}
-            onChange={() => {}}
-            placeholder="Enter your order ID..."
-            className="mb-6"
-            required
-          />
-
-          <InputField
-            label="YOUR EMAIL"
+            label="YOUR EMAIL (OPTIONAL)"
             value={email}
             onChange={setEmail}
             placeholder="email@example.com"
             type="email"
             className="mb-6"
-            required
           />
 
           <InputField

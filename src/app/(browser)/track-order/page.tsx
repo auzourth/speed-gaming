@@ -117,14 +117,6 @@ export default function TrackOrder() {
 
             <div className="grid grid-cols-1 gap-3 mb-6">
               <div>
-                <span className="text-gray-400 text-sm">Game Email: </span>
-                <span className="text-white text-sm">{order?.email}</span>
-              </div>
-              <div>
-                <span className="text-gray-400 text-sm">Game Password: </span>
-                <span className="text-white text-sm">{order.code}</span>
-              </div>
-              <div>
                 <span className="text-gray-400 text-sm">Guide: </span>
                 <span className="text-white text-sm">{order.loginInfo}</span>
               </div>
@@ -138,39 +130,6 @@ export default function TrackOrder() {
             />
           </div>
         )}
-
-        {/* FAQ Section */}
-        {/* <div className="bg-gray-800 rounded-lg p-4">
-          <button
-            onClick={() => setShowFAQ(!showFAQ)}
-            className="flex items-center justify-between w-full text-left"
-          >
-            <h3 className="text-base font-medium">
-              How To open a case in kinguin?
-            </h3>
-            <ChevronDown
-              className={`w-4 h-4 transition-transform ${
-                showFAQ ? 'rotate-180' : ''
-              }`}
-            />
-          </button>
-
-          {showFAQ && (
-            <div className="mt-3 pt-3 border-t border-gray-700">
-              <p className="text-gray-300 text-sm">
-                To open a case in Kinguin, please follow these steps:
-              </p>
-              <ol className="list-decimal list-inside mt-2 space-y-1 text-gray-300 text-sm">
-                <li>Log into your Kinguin account</li>
-                <li>Navigate to your order history</li>
-                <li>Find the relevant order and click "Report Problem"</li>
-                <li>Select the appropriate issue category</li>
-                <li>Provide detailed information about your problem</li>
-                <li>Submit the case and wait for support response</li>
-              </ol>
-            </div>
-          )}
-        </div> */}
       </main>
     </div>
   );
