@@ -63,7 +63,7 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
                     (steps.filter((step) => step.status === 'completed')
                       .length /
                       (steps.length - 1)) *
-                    100
+                    95
                   }%`,
           }}
         ></div>
@@ -79,16 +79,16 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 ${
                   step.status === 'completed'
                     ? 'bg-green-500'
-                    : step.status === 'processing'
-                    ? 'bg-amber-500'
-                    : 'bg-gray-600'
+                    : // : step.status === 'processing'
+                      // ? 'bg-amber-500'
+                      'bg-gray-600'
                 }`}
               >
                 {step.status === 'completed'
                   ? '✓'
-                  : step.status === 'processing'
-                  ? '✓'
-                  : index + 1}
+                  : // : step.status === 'processing'
+                    // ? '✓'
+                    index + 1}
               </div>
 
               {/* Step Label */}
@@ -114,13 +114,17 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
                 step.status === 'completed'
                   ? 'bg-green-500'
                   : step.status === 'processing'
-                  ? 'bg-yellow-500'
-                  : 'bg-gray-600'
+                  ? 'bg-yellow-500 hidden'
+                  : 'bg-gray-600 hidden'
               }`}
             />
             <div className="flex-1 flex gap-2">
               {step.timestamp && (
-                <div className="text-gray-400 text-sm mb-1">
+                <div
+                  className={`text-gray-400 text-sm mb-1 ${
+                    step.status === 'completed' ? '' : 'hidden'
+                  }`}
+                >
                   {step.status === 'completed'
                     ? formatTimestamp(step.timestamp)
                     : formatTimestamp('00000000000000')}
@@ -131,8 +135,8 @@ const OrderStepper: React.FC<OrderStepperProps> = ({
                   step.status === 'completed'
                     ? 'text-green-500 font-semibold'
                     : step.status === 'processing'
-                    ? 'text-amber-500 font-medium'
-                    : 'text-gray-400'
+                    ? 'text-amber-500 font-medium hidden'
+                    : 'text-gray-400 hidden'
                 }`}
               >
                 {stepDescriptions[index]}

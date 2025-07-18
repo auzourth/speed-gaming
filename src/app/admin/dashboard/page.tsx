@@ -57,7 +57,7 @@ const AdminDashboardPage: React.FC = () => {
       const { data: ordersData, error: ordersError } = await supabase
         .from('cheap-play-zone')
         .select('*')
-        .order('created_at', { ascending: true });
+        .order('created_at', { ascending: false });
 
       if (ordersError) {
         console.error('Error loading orders:', ordersError);
