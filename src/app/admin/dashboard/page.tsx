@@ -33,6 +33,7 @@ const AdminDashboardPage: React.FC = () => {
   );
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
 
   // Delete confirmation modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -55,16 +56,32 @@ const AdminDashboardPage: React.FC = () => {
         return;
       }
 
-      // Build query for orders
+      // Get total count
+      let countQuery = supabase
+        .from('cheap-play-zone')
+        .select('*', { count: 'exact', head: true });
+      if (statusFilter) {
+        countQuery = countQuery.eq('status', statusFilter);
+      }
+      const { count, error: countError } = await countQuery;
+      if (!countError && typeof count === 'number') {
+        setTotalRows(count);
+      } else {
+        setTotalRows(0);
+      }
+
+      // Build query for orders (paged)
       let query = supabase
         .from('cheap-play-zone')
         .select('*')
-        .order('created_at', { ascending: true });
-
+        .order('created_at', { ascending: true })
+        .range(
+          0 + (currentPage - 1) * itemsPerPage,
+          currentPage * itemsPerPage - 1
+        );
       if (statusFilter) {
         query = query.eq('status', statusFilter);
       }
-
       const { data: ordersData, error: ordersError } = await query;
 
       if (ordersError) {
@@ -110,7 +127,7 @@ const AdminDashboardPage: React.FC = () => {
     };
 
     checkSessionAndLoadData();
-  }, [router, refreshTrigger, statusFilter]);
+  }, [router, refreshTrigger, statusFilter, currentPage, itemsPerPage]);
 
   // Polling for new redemptions every 60 seconds
   useEffect(() => {
@@ -172,11 +189,9 @@ const AdminDashboardPage: React.FC = () => {
     );
   });
 
-  // Pagination logic
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  // Pagination logic (now using totalRows from Supabase count)
+  const totalPages = Math.ceil(totalRows / itemsPerPage);
+  const currentItems = orders;
 
   const handleSelectAll = () => {
     if (selectedOrders.length === currentItems.length) {
