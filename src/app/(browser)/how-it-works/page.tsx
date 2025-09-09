@@ -1,24 +1,6 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
-import image from '@/assetes/image.png';
-import image2 from '@/assetes/image2.png';
-import image3 from '@/assetes/image3.png';
-import image4 from '@/assetes/image4.png';
-import image5 from '@/assetes/image5.png';
-import image6 from '@/assetes/image6.png';
-import image7 from '@/assetes/image7.png';
-import image8 from '@/assetes/image8.png';
-import image9 from '@/assetes/image9.png';
-import image10 from '@/assetes/image10.png';
-import image11 from '@/assetes/image11.png';
-import image12 from '@/assetes/image12.png';
-import image13 from '@/assetes/image13.png';
-import image14 from '@/assetes/image14.png';
-import image15 from '@/assetes/image15.png';
-import image16 from '@/assetes/image16.png';
 import Image from 'next/image';
 import openCase from '@/assetes/open-case.jpeg';
 
