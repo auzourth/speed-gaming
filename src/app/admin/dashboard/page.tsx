@@ -31,6 +31,8 @@ const AdminDashboardPage: React.FC = () => {
   const [notifications, setNotifications] = useState<RedemptionNotification[]>(
     []
   );
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
 
   // Delete confirmation modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -53,11 +55,17 @@ const AdminDashboardPage: React.FC = () => {
         return;
       }
 
-      // Load orders from Supabase
-      const { data: ordersData, error: ordersError } = await supabase
+      // Build query for orders
+      let query = supabase
         .from('cheap-play-zone')
         .select('*')
         .order('created_at', { ascending: true });
+
+      if (statusFilter) {
+        query = query.eq('status', statusFilter);
+      }
+
+      const { data: ordersData, error: ordersError } = await query;
 
       if (ordersError) {
         console.error('Error loading orders:', ordersError);
@@ -102,7 +110,7 @@ const AdminDashboardPage: React.FC = () => {
     };
 
     checkSessionAndLoadData();
-  }, [router, refreshTrigger]);
+  }, [router, refreshTrigger, statusFilter]);
 
   // Polling for new redemptions every 60 seconds
   useEffect(() => {
@@ -478,6 +486,53 @@ const AdminDashboardPage: React.FC = () => {
             className="w-16 bg-gray-800 border border-gray-700 rounded p-2 text-white text-center"
           />
           <span>of {totalPages}</span>
+        </div>
+
+        {/* Status Filter Button */}
+        <div className="relative ml-2 flex-1 flex justify-end">
+          <button
+            onClick={() => setIsStatusDropdownOpen((prev) => !prev)}
+            className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded transition-colors"
+          >
+            {statusFilter
+              ? `Status: ${
+                  statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)
+                }`
+              : 'Filter by Status'}
+          </button>
+          {isStatusDropdownOpen && (
+            <div className="absolute left-0 mt-2 w-48 bg-gray-800 rounded shadow-lg z-20">
+              {['pending', 'delivered', 'processing', 'completed'].map(
+                (status) => (
+                  <button
+                    key={status}
+                    onClick={() => {
+                      setStatusFilter(status);
+                      setIsStatusDropdownOpen(false);
+                      setCurrentPage(1);
+                    }}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                      statusFilter === status
+                        ? 'bg-purple-700 text-white'
+                        : 'text-gray-200'
+                    }`}
+                  >
+                    {status.charAt(0).toUpperCase() + status.slice(1)}
+                  </button>
+                )
+              )}
+              <button
+                onClick={() => {
+                  setStatusFilter(null);
+                  setIsStatusDropdownOpen(false);
+                  setCurrentPage(1);
+                }}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-700 text-gray-400"
+              >
+                Clear Filter
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 ml-auto">
