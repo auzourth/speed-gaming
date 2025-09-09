@@ -114,7 +114,7 @@ const Page = () => {
             </div>
             <div className="mt-12">
               <Link
-                href="mailto:ali.transporter@gmail.com"
+                href="https://www.g2a.co/contact/?itm_source=footer&itm_medium=&itm_campaign=footer-global"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-gray-800 hover:bg-gray-700 px-6 py-3 rounded-lg transition-colors"
