@@ -77,7 +77,7 @@ const AdminDashboardPage: React.FC = () => {
       let query = supabase
         .from('cheap-play-zone')
         .select('*')
-        .order('created_at', { ascending: true })
+        .order('created_at', { ascending: false })
         .range(
           0 + (currentPage - 1) * itemsPerPage,
           currentPage * itemsPerPage - 1
