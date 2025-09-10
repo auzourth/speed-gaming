@@ -203,45 +203,6 @@ const AdminDashboardPage: React.FC = () => {
     setOrderToDelete(null);
   };
 
-  const handleSaveGeneratedCode = async (generatedCode: {
-    name: string;
-    email: string;
-    code: string;
-  }) => {
-    try {
-      const { error } = await supabase
-        .from('cheap-play-zone')
-        .insert({
-          code: generatedCode.code,
-          name: generatedCode.name,
-          email: generatedCode.email,
-          status: 'pending',
-          isRedeemed: false,
-          pending: JSON.stringify({
-            label: 'pending',
-            status: 'completed',
-            timestamp: Date.now(),
-          }),
-          processing: JSON.stringify({
-            label: 'processing',
-            status: 'processing',
-            timestamp: Date.now(),
-          }),
-        })
-        .select();
-
-      if (error) {
-        alert('Error saving to Supabase. Fallback to local context.');
-        console.error('Error saving to Supabase:', error);
-      } else {
-        // Refresh the orders list
-        setRefreshTrigger((prev) => prev + 1);
-      }
-    } catch (err) {
-      console.error('Exception when saving code:', err);
-    }
-  };
-
   const handleDeleteSelected = async () => {
     if (selectedOrders.length === 0) return;
 
@@ -440,7 +401,6 @@ const AdminDashboardPage: React.FC = () => {
       <CodeGeneratorModal
         isOpen={isCodeModalOpen}
         onClose={() => setIsCodeModalOpen(false)}
-        onSave={handleSaveGeneratedCode}
       />
 
       <div className="overflow-x-auto bg-gray-800 rounded-lg shadow mb-6">

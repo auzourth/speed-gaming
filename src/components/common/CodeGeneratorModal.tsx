@@ -4,6 +4,7 @@ import Modal from './Modal';
 import { v4 as uuidv4 } from 'uuid';
 import { Copy } from 'lucide-react';
 import InputField from '@/components/ui/InputField';
+import { supabase } from '../../lib/supabase';
 
 interface GeneratedCode {
   name: string;
@@ -14,19 +15,18 @@ interface GeneratedCode {
 interface CodeGeneratorModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave?: (code: GeneratedCode) => void;
 }
 
 const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
   isOpen,
   onClose,
-  onSave,
 }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [quantity, setQuantity] = useState(1);
   const [generatedCodes, setGeneratedCodes] = useState<GeneratedCode[]>([]);
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [savedCodes, setSavedCodes] = useState<{ [code: string]: boolean }>({});
 
   const generateCode = () => {
     if (!name || quantity < 1) return;
@@ -39,6 +39,45 @@ const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
       });
     }
     setGeneratedCodes(codes);
+  };
+
+  const handleSaveGeneratedCode = async (generatedCode: {
+    name: string;
+    email: string;
+    code: string;
+  }) => {
+    setSavedCodes((prev) => ({ ...prev, [generatedCode.code]: true }));
+    try {
+      const { error } = await supabase
+        .from('cheap-play-zone')
+        .insert({
+          code: generatedCode.code,
+          name: generatedCode.name,
+          email: generatedCode.email,
+          status: 'pending',
+          isRedeemed: false,
+          pending: JSON.stringify({
+            label: 'pending',
+            status: 'completed',
+            timestamp: Date.now(),
+          }),
+          processing: JSON.stringify({
+            label: 'processing',
+            status: 'processing',
+            timestamp: Date.now(),
+          }),
+        })
+        .select();
+
+      if (error) {
+        alert('Error saving to Supabase. Fallback to local context.');
+        console.error('Error saving to Supabase:', error);
+        setSavedCodes((prev) => ({ ...prev, [generatedCode.code]: false }));
+      }
+    } catch (err) {
+      console.error('Exception when saving code:', err);
+      setSavedCodes((prev) => ({ ...prev, [generatedCode.code]: false }));
+    }
   };
 
   const resetForm = () => {
@@ -172,10 +211,15 @@ const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
                   </div>
 
                   <button
-                    onClick={() => onSave && onSave(generatedCode)}
-                    className="w-full mt-2 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded transition-colors"
+                    onClick={() => handleSaveGeneratedCode(generatedCode)}
+                    disabled={!!savedCodes[generatedCode.code]}
+                    className={`w-full mt-2 text-white py-2 px-4 rounded transition-colors ${
+                      savedCodes[generatedCode.code]
+                        ? 'bg-gray-500 cursor-not-allowed'
+                        : 'bg-green-600 hover:bg-green-700'
+                    }`}
                   >
-                    Save Code
+                    {savedCodes[generatedCode.code] ? 'Saved' : 'Save Code'}
                   </button>
                 </div>
               ))}
@@ -184,8 +228,10 @@ const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
             <div className="flex space-x-3">
               <button
                 onClick={() => {
-                  if (generatedCodes.length > 0 && onSave) {
-                    generatedCodes.forEach((code) => onSave(code));
+                  if (generatedCodes.length > 0) {
+                    generatedCodes.forEach((code) =>
+                      handleSaveGeneratedCode(code)
+                    );
                     resetForm();
                     onClose();
                   }
