@@ -132,17 +132,6 @@ const AdminDashboardPage: React.FC = () => {
     checkSessionAndLoadData();
   }, [router, refreshTrigger, statusFilter, currentPage, itemsPerPage]);
 
-  // Filter orders based on search term
-  const filteredOrders = orders.filter((order) => {
-    const searchLower = searchTerm.toLowerCase();
-    return (
-      order.code.toLowerCase().includes(searchLower) ||
-      (order.orderId && order.orderId.toLowerCase().includes(searchLower)) ||
-      (order.email && order.email.toLowerCase().includes(searchLower)) ||
-      (order.name && order.name.toLowerCase().includes(searchLower))
-    );
-  });
-
   // Pagination logic (now using totalRows from Supabase count)
   const totalPages = Math.ceil(totalRows / itemsPerPage);
   const currentItems = orders;

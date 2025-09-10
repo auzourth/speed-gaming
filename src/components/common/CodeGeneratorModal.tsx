@@ -41,14 +41,6 @@ const CodeGeneratorModal: React.FC<CodeGeneratorModalProps> = ({
     setGeneratedCodes(codes);
   };
 
-  const handleSave = () => {
-    if (generatedCodes.length > 0 && onSave) {
-      generatedCodes.forEach((code) => onSave(code));
-      resetForm();
-      onClose();
-    }
-  };
-
   const resetForm = () => {
     setName('');
     setEmail('');

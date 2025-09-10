@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.shared-runtime';
 
 interface RedemptionNotification {
   id: string;
@@ -15,7 +16,7 @@ interface NotificationsProps {
   setNotifications: React.Dispatch<
     React.SetStateAction<RedemptionNotification[]>
   >;
-  router: any;
+  router: AppRouterInstance;
   clearAllNotifications: () => void;
   markAllNotificationsAsRead: () => void;
 }
