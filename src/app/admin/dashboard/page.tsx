@@ -134,7 +134,17 @@ const AdminDashboardPage: React.FC = () => {
 
   // Pagination logic (now using totalRows from Supabase count)
   const totalPages = Math.ceil(totalRows / itemsPerPage);
-  const currentItems = orders;
+  // Filter orders by search term (code, name, or email)
+  const filteredOrders = orders.filter((order) => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return true;
+    return (
+      (order.code && order.code.toLowerCase().includes(term)) ||
+      (order.name && order.name.toLowerCase().includes(term)) ||
+      (order.email && order.email.toLowerCase().includes(term))
+    );
+  });
+  const currentItems = filteredOrders;
 
   const handleSelectAll = () => {
     if (selectedOrders.length === currentItems.length) {
@@ -401,6 +411,7 @@ const AdminDashboardPage: React.FC = () => {
       <CodeGeneratorModal
         isOpen={isCodeModalOpen}
         onClose={() => setIsCodeModalOpen(false)}
+        onSave={() => setRefreshTrigger((prev) => prev + 1)}
       />
 
       <div className="overflow-x-auto bg-gray-800 rounded-lg shadow mb-6">
